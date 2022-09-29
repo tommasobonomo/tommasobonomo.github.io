@@ -5,19 +5,19 @@ import Element exposing (Element)
 
 type alias View msg =
     { title : String
-    , body : List (Element msg)
+    , body : Element msg
     }
 
 
 map : (msg1 -> msg2) -> View msg1 -> View msg2
 map fn doc =
     { title = doc.title
-    , body = List.map (Element.map fn) doc.body
+    , body = Element.map fn doc.body
     }
 
 
 placeholder : String -> View msg
 placeholder moduleName =
     { title = "Placeholder - " ++ moduleName
-    , body = [ Element.text moduleName ]
+    , body = Element.text moduleName
     }

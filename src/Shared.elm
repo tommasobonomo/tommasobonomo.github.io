@@ -2,6 +2,7 @@ module Shared exposing (Data, Model, Msg(..), SharedMsg(..), template)
 
 import Browser.Navigation
 import DataSource
+import Element exposing (..)
 import Html exposing (Html)
 import Pages.Flags
 import Pages.PageUrl exposing (PageUrl)
@@ -58,7 +59,7 @@ init :
             , pageUrl : Maybe PageUrl
             }
     -> ( Model, Cmd Msg )
-init navigationKey flags maybePagePath =
+init _ _ _ =
     ( { showMobileMenu = False }
     , Cmd.none
     )
@@ -70,7 +71,7 @@ update msg model =
         OnPageChange _ ->
             ( { model | showMobileMenu = False }, Cmd.none )
 
-        SharedMsg globalMsg ->
+        SharedMsg _ ->
             ( model, Cmd.none )
 
 
@@ -94,7 +95,9 @@ view :
     -> (Msg -> msg)
     -> View msg
     -> { body : Html msg, title : String }
-view sharedData page model toMsg pageView =
-    { body = Html.div [] pageView.body
+view _ _ _ _ pageView =
+    { body =
+        layout [] <|
+            pageView.body
     , title = pageView.title
     }
