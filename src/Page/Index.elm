@@ -153,7 +153,7 @@ landingText =
         , paragraph [] [ text "My name is Tommaso Bonomo, welcome to my website!" ]
         , paragraph [] [ text "Here I want to share a bit of all my passions, such as NLP research blogposts and analog photographs. " ]
         , paragraph []
-            [ text "Feel free to reach out at any of my contacts below :) "
+            [ text "Feel free to reach out through any of my contacts below :) "
             , text "Plain old email is probably the best way for NLP and ML/DL related matters, while my Instagram is the most appropriate contact if you are interested in my photography."
             ]
         , column [ spacing 10 ]
