@@ -1,10 +1,12 @@
 module Shared exposing (Data, Model, Msg(..), SharedMsg(..), template)
 
+import Browser.Events as Events
 import Browser.Navigation
 import DataSource
 import Element exposing (..)
 import Html exposing (Html)
-import Pages.Flags
+import Json.Decode exposing (decodeValue, field, int, map2)
+import Pages.Flags exposing (Flags(..))
 import Pages.PageUrl exposing (PageUrl)
 import Path exposing (Path)
 import Route exposing (Route)
@@ -30,6 +32,7 @@ type Msg
         , fragment : Maybe String
         }
     | SharedMsg SharedMsg
+    | SetScreenSize Int Int
 
 
 type alias Data =
@@ -41,8 +44,18 @@ type SharedMsg
 
 
 type alias Model =
-    { showMobileMenu : Bool
-    }
+    { classifiedDevice : Device }
+
+
+type alias Viewport =
+    { width : Int, height : Int }
+
+
+viewportDecoder : Json.Decode.Decoder Viewport
+viewportDecoder =
+    map2 Viewport
+        (field "width" int)
+        (field "height" int)
 
 
 init :
@@ -59,25 +72,51 @@ init :
             , pageUrl : Maybe PageUrl
             }
     -> ( Model, Cmd Msg )
-init _ _ _ =
-    ( { showMobileMenu = False }
-    , Cmd.none
-    )
+init _ flags _ =
+    let
+        defaultModel =
+            ( { classifiedDevice = { class = Desktop, orientation = Landscape } }, Cmd.none )
+    in
+    case flags of
+        BrowserFlags value ->
+            let
+                resultViewport =
+                    decodeValue viewportDecoder value
+            in
+            case resultViewport of
+                Ok viewport ->
+                    ( { classifiedDevice = classifyDevice { width = viewport.width, height = viewport.height }
+                      }
+                    , Cmd.none
+                    )
+
+                Err _ ->
+                    defaultModel
+
+        PreRenderFlags ->
+            defaultModel
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         OnPageChange _ ->
-            ( { model | showMobileMenu = False }, Cmd.none )
+            ( model, Cmd.none )
 
         SharedMsg _ ->
             ( model, Cmd.none )
 
+        SetScreenSize width height ->
+            let
+                classifiedDevice =
+                    classifyDevice { width = width, height = height }
+            in
+            ( { model | classifiedDevice = classifiedDevice }, Cmd.none )
+
 
 subscriptions : Path -> Model -> Sub Msg
 subscriptions _ _ =
-    Sub.none
+    Sub.batch [ Events.onResize (\w h -> SetScreenSize w h) ]
 
 
 data : DataSource.DataSource Data

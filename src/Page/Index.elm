@@ -6,7 +6,7 @@ import Element.Border as Border
 import Element.Font as Font
 import Head
 import Head.Seo as Seo
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, style)
 import Page exposing (Page, StaticPayload)
 import Pages.PageUrl exposing (PageUrl)
 import Pages.Url
@@ -36,9 +36,21 @@ page =
         |> Page.buildNoState { view = view }
 
 
+type alias Social =
+    { iconPath : String
+    , altDescription : String
+    , url : String
+    , label : String
+    }
+
+
 type alias Data =
     { profilePictureUri : Pages.Url.Url
     , profilePictureSize : Int
+    , email : Social
+    , github : Social
+    , twitter : Social
+    , instagram : Social
     }
 
 
@@ -47,6 +59,30 @@ data =
     DataSource.succeed
         { profilePictureUri = "/profile.jpg" |> Path.fromString |> Pages.Url.fromPath
         , profilePictureSize = 200
+        , email =
+            Social
+                (Path.toAbsolute <| Path.fromString "/assets/email.svg")
+                "Email icon"
+                "mailto:tommaso.bonomo.97@gmail.com"
+                "tommaso.bonomo.97@gmail.com"
+        , github =
+            Social
+                (Path.toAbsolute <| Path.fromString "/assets/github.png")
+                "GitHub icon"
+                "https://github.com/tommasobonomo"
+                "@tommasobonomo"
+        , twitter =
+            Social
+                (Path.toAbsolute <| Path.fromString "/assets/twitter.svg")
+                "Twitter icon"
+                "https://twitter.com/tommybonomo"
+                "@tommybonomo"
+        , instagram =
+            Social
+                (Path.toAbsolute <| Path.fromString "/assets/instagram.svg")
+                "Instagram icon"
+                "https://www.instagram.com/picsbytommi/"
+                "@picsbytommi"
         }
 
 
@@ -70,63 +106,54 @@ head static =
         |> Seo.website
 
 
-type Social
-    = Email
-    | GitHub
-    | Twitter
-    | Instagram
-
-
-socialLink : Social -> Element msg
-socialLink social =
+socialLink : Social -> DeviceClass -> Element msg
+socialLink social deviceClass =
     let
-        socialElement =
-            case social of
-                Instagram ->
-                    [ image [ width <| px 20 ]
-                        { src = Path.toAbsolute <| Path.fromString "/assets/instagram.svg", description = "Instagram icon" }
-                    , newTabLink
-                        [ htmlAttribute <| class "underline" ]
-                        { url = "https://www.instagram.com/picsbytommi/", label = text "@picsbytommi" }
-                    ]
+        -- Unfortunately, only way to implement coloured underline decorations is through HTML style tag
+        underlineAttribute =
+            case deviceClass of
+                Phone ->
+                    htmlAttribute <| style "text-decoration" "underline teal solid 3px"
 
-                Email ->
-                    [ image [ width <| px 20 ]
-                        { src = Path.toAbsolute <| Path.fromString "/assets/email.svg", description = "Email icon" }
-                    , newTabLink
-                        [ htmlAttribute <| class "underline" ]
-                        { url = "mailto:tommaso.bonomo.97@gmail.com", label = text "tommaso.bonomo.97@gmail.com" }
-                    ]
+                Tablet ->
+                    htmlAttribute <| style "text-decoration" "underline teal solid 3px"
 
-                GitHub ->
-                    [ image [ width <| px 20 ]
-                        { src = Path.toAbsolute <| Path.fromString "/assets/github.png", description = "GitHub icon" }
-                    , newTabLink
-                        [ htmlAttribute <| class "underline" ]
-                        { url = "https://github.com/tommasobonomo", label = text "@tommasobonomo" }
-                    ]
+                Desktop ->
+                    htmlAttribute <| class "underline"
 
-                Twitter ->
-                    [ image [ width <| px 20 ]
-                        { src = Path.toAbsolute <| Path.fromString "/assets/twitter.svg", description = "Twitter icon" }
-                    , newTabLink
-                        [ htmlAttribute <| class "underline" ]
-                        { url = "https://twitter.com/tommybonomo", label = text "@tommybonomo" }
-                    ]
+                BigDesktop ->
+                    htmlAttribute <| class "underline"
     in
-    row [ spacing 10, centerY ] socialElement
+    row [ spacing 10, centerY ]
+        [ image [ width <| px 20 ]
+            { src = social.iconPath, description = social.altDescription }
+        , newTabLink [ underlineAttribute ] { url = social.url, label = text social.label }
+        ]
 
 
-profilePicture : Pages.Url.Url -> Int -> Element msg
-profilePicture url size =
+setWidth : Bool -> Bool -> Attribute msg
+setWidth isVertical isPanel =
+    if isVertical == True then
+        if isPanel == True then
+            width <| fillPortion 1
+
+        else
+            width <| fillPortion 5
+
+    else
+        width fill
+
+
+profilePicture : Data -> Bool -> Element msg
+profilePicture dataRecord isVertical =
     column
         [ height fill
-        , width <| fillPortion 1
+        , setWidth isVertical True
         ]
         [ el
-            [ width <| px size
-            , height <| px size
-            , Border.rounded (size // 2)
+            [ width <| px dataRecord.profilePictureSize
+            , height <| px dataRecord.profilePictureSize
+            , Border.rounded (dataRecord.profilePictureSize // 2)
             , Border.color (rgb255 0 128 128)
             , Border.width 10
             , clip
@@ -134,17 +161,17 @@ profilePicture url size =
           <|
             image
                 [ width fill, height fill ]
-                { src = url |> Pages.Url.toString
+                { src = dataRecord.profilePictureUri |> Pages.Url.toString
                 , description = "Profile picture of Tommaso Bonomo"
                 }
         ]
 
 
-landingText : Element msg
-landingText =
+landingText : Data -> Bool -> Device -> Element msg
+landingText dataRecord isVertical device =
     textColumn
         [ height fill
-        , width <| fillPortion 5
+        , setWidth isVertical False
         , spacing 20
         , Font.family [ Font.serif ]
         ]
@@ -157,7 +184,11 @@ landingText =
             , text "Plain old email is probably the best way for NLP and ML/DL related matters, while my Instagram is the most appropriate contact if you are interested in my photography."
             ]
         , column [ spacing 10 ]
-            [ socialLink Email, socialLink Twitter, socialLink GitHub, socialLink Instagram ]
+            [ socialLink dataRecord.email device.class
+            , socialLink dataRecord.twitter device.class
+            , socialLink dataRecord.github device.class
+            , socialLink dataRecord.instagram device.class
+            ]
         ]
 
 
@@ -166,14 +197,47 @@ view :
     -> Shared.Model
     -> StaticPayload Data RouteParams
     -> View Msg
-view _ _ static =
+view _ sharedModel static =
     { title = "Tommaso Bonomo"
     , body =
-        row
-            [ width (fill |> maximum 1024)
-            , centerX
-            , paddingXY 0 200
-            , spacing 50
-            ]
-            [ profilePicture static.data.profilePictureUri static.data.profilePictureSize, landingText ]
+        let
+            wideView =
+                row
+                    [ width (fill |> maximum 1024)
+                    , centerX
+                    , paddingXY 0 200
+                    , spacing 50
+                    ]
+                    [ profilePicture static.data False
+                    , landingText static.data True sharedModel.classifiedDevice
+                    ]
+
+            narrowView =
+                column [ spacing 20, paddingXY 10 50 ]
+                    [ el [ centerX ] <| profilePicture static.data True
+                    , el [ centerX ] <| landingText static.data False sharedModel.classifiedDevice
+                    ]
+        in
+        case sharedModel.classifiedDevice.class of
+            BigDesktop ->
+                wideView
+
+            Desktop ->
+                wideView
+
+            Tablet ->
+                case sharedModel.classifiedDevice.orientation of
+                    Portrait ->
+                        narrowView
+
+                    Landscape ->
+                        wideView
+
+            Phone ->
+                case sharedModel.classifiedDevice.orientation of
+                    Portrait ->
+                        narrowView
+
+                    Landscape ->
+                        wideView
     }
