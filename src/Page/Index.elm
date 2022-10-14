@@ -63,8 +63,8 @@ data =
             Social
                 (Path.toAbsolute <| Path.fromString "/assets/email.svg")
                 "Email icon"
-                "mailto:tommaso.bonomo.97@gmail.com"
-                "tommaso.bonomo.97@gmail.com"
+                "mailto:tommaso.bonomo@uniroma1.it"
+                "tommaso.bonomo@uniroma1.it"
         , github =
             Social
                 (Path.toAbsolute <| Path.fromString "/assets/github.png")
@@ -106,28 +106,28 @@ head static =
         |> Seo.website
 
 
+underlineAttribute : DeviceClass -> Attribute msg
+underlineAttribute deviceClass =
+    case deviceClass of
+        Phone ->
+            htmlAttribute <| style "text-decoration" "underline teal solid 3px"
+
+        Tablet ->
+            htmlAttribute <| style "text-decoration" "underline teal solid 3px"
+
+        Desktop ->
+            htmlAttribute <| class "underline"
+
+        BigDesktop ->
+            htmlAttribute <| class "underline"
+
+
 socialLink : Social -> DeviceClass -> Element msg
 socialLink social deviceClass =
-    let
-        -- Unfortunately, only way to implement coloured underline decorations is through HTML style tag
-        underlineAttribute =
-            case deviceClass of
-                Phone ->
-                    htmlAttribute <| style "text-decoration" "underline teal solid 3px"
-
-                Tablet ->
-                    htmlAttribute <| style "text-decoration" "underline teal solid 3px"
-
-                Desktop ->
-                    htmlAttribute <| class "underline"
-
-                BigDesktop ->
-                    htmlAttribute <| class "underline"
-    in
     row [ spacing 10, centerY ]
         [ image [ width <| px 20 ]
             { src = social.iconPath, description = social.altDescription }
-        , newTabLink [ underlineAttribute ] { url = social.url, label = text social.label }
+        , newTabLink [ underlineAttribute <| deviceClass ] { url = social.url, label = text social.label }
         ]
 
 
@@ -177,7 +177,12 @@ landingText dataRecord isVertical device =
         ]
         [ paragraph [ Font.size 50 ]
             [ text "Hey!" ]
-        , paragraph [] [ text "My name is Tommaso Bonomo, welcome to my website!" ]
+        , paragraph [] [ text "My name is Tommaso Bonomo, welcome to my (very work-in-progress) website!" ]
+        , paragraph []
+            [ text "I am a PhD student at "
+            , newTabLink [ underlineAttribute <| device.class ] { url = "https://nlp.uniroma1.it/", label = text "SapienzaNLP" }
+            , text ", starting from 1st November 2022."
+            ]
         , paragraph [] [ text "Here I want to share a bit of all my passions, such as NLP research blogposts and analog photographs. " ]
         , paragraph []
             [ text "Feel free to reach out through any of my contacts below :) "
