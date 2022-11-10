@@ -6,7 +6,7 @@ import Element.Border as Border
 import Element.Font as Font
 import Head
 import Head.Seo as Seo
-import Html.Attributes exposing (class, style)
+import Html.Attributes exposing (class, rel, style)
 import Page exposing (Page, StaticPayload)
 import Pages.PageUrl exposing (PageUrl)
 import Pages.Url
@@ -41,6 +41,7 @@ type alias Social =
     , altDescription : String
     , url : String
     , label : String
+    , relTag : Maybe String
     }
 
 
@@ -66,30 +67,35 @@ data =
                 "Email icon"
                 "mailto:bonomo@diag.uniroma1.it"
                 "bonomo@diag.uniroma1.it"
+                Nothing
         , github =
             Social
                 (Path.toAbsolute <| Path.fromString "/assets/github.png")
                 "GitHub icon"
                 "https://github.com/tommasobonomo"
                 "@tommasobonomo"
+                Nothing
         , twitter =
             Social
                 (Path.toAbsolute <| Path.fromString "/assets/twitter.svg")
                 "Twitter icon"
                 "https://twitter.com/tommybonomo"
                 "@tommybonomo"
+                Nothing
         , instagram =
             Social
                 (Path.toAbsolute <| Path.fromString "/assets/instagram.svg")
                 "Instagram icon"
                 "https://www.instagram.com/picsbytommi/"
                 "@picsbytommi"
+                Nothing
         , mastodon =
             Social
                 (Path.toAbsolute <| Path.fromString "/assets/mastodon.svg")
                 "Mastodon icon"
                 "https://sigmoid.social/@tommasobonomo"
                 "@tommasobonomo@sigmoid.social"
+                (Just "me")
         }
 
 
@@ -131,10 +137,19 @@ underlineAttribute deviceClass =
 
 socialLink : Social -> DeviceClass -> Element msg
 socialLink social deviceClass =
+    let
+        attributes =
+            case social.relTag of
+                Nothing ->
+                    [ underlineAttribute <| deviceClass ]
+
+                Just tag ->
+                    [ underlineAttribute <| deviceClass, htmlAttribute <| rel <| tag ]
+    in
     row [ spacing 10, centerY ]
         [ image [ width <| px 20 ]
             { src = social.iconPath, description = social.altDescription }
-        , newTabLink [ underlineAttribute <| deviceClass ] { url = social.url, label = text social.label }
+        , newTabLink attributes { url = social.url, label = text social.label }
         ]
 
 
