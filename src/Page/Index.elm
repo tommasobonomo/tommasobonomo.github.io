@@ -51,6 +51,7 @@ type alias Data =
     , github : Social
     , twitter : Social
     , instagram : Social
+    , mastodon : Social
     }
 
 
@@ -63,8 +64,8 @@ data =
             Social
                 (Path.toAbsolute <| Path.fromString "/assets/email.svg")
                 "Email icon"
-                "mailto:tommaso.bonomo@uniroma1.it"
-                "tommaso.bonomo@uniroma1.it"
+                "mailto:bonomo@diag.uniroma1.it"
+                "bonomo@diag.uniroma1.it"
         , github =
             Social
                 (Path.toAbsolute <| Path.fromString "/assets/github.png")
@@ -83,6 +84,12 @@ data =
                 "Instagram icon"
                 "https://www.instagram.com/picsbytommi/"
                 "@picsbytommi"
+        , mastodon =
+            Social
+                (Path.toAbsolute <| Path.fromString "/assets/mastodon.svg")
+                "Mastodon icon"
+                "https://sigmoid.social/@tommasobonomo"
+                "@tommasobonomo@sigmoid.social"
         }
 
 
@@ -191,6 +198,7 @@ landingText dataRecord isVertical device =
         , column [ spacing 10 ]
             [ socialLink dataRecord.email device.class
             , socialLink dataRecord.twitter device.class
+            , socialLink dataRecord.mastodon device.class
             , socialLink dataRecord.github device.class
             , socialLink dataRecord.instagram device.class
             ]
