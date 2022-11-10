@@ -64,8 +64,8 @@ data =
             Social
                 (Path.toAbsolute <| Path.fromString "/assets/email.svg")
                 "Email icon"
-                "mailto:tommaso.bonomo@uniroma1.it"
-                "tommaso.bonomo@uniroma1.it"
+                "mailto:bonomo@diag.uniroma1.it"
+                "bonomo@diag.uniroma1.it"
         , github =
             Social
                 (Path.toAbsolute <| Path.fromString "/assets/github.png")
