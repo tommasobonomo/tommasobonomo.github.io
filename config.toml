@@ -1,0 +1,34 @@
+# The URL the site will be built for
+base_url = "https://tommasobonomo.github.io"
+
+# Whether to automatically compile all Sass files in the sass directory
+compile_sass = true
+
+# Whether to build a search index to be used later on by a JavaScript library
+build_search_index = false
+
+theme = "anemone"
+
+[markdown]
+# Whether to do syntax highlighting
+# Theme can be customised by setting the `highlight_theme` variable to a theme supported by Zola
+highlight_code = false
+
+[extra]
+author = "Tommaso"
+display_author = true
+
+favicon = "favicon.ico"
+image = ""
+
+default_theme = "light"
+list_pages = false
+
+[[extra.header_nav]]
+en = { name = "/home/", url = "/"}
+
+[[extra.header_nav]]
+en = { name = "/publications/", url = "/publications" }
+
+[[extra.header_nav]]
+en = { name = "/photography/", url = "/photography" }
