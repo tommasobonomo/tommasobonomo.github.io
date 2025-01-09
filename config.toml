@@ -24,11 +24,8 @@ image = ""
 default_theme = "light"
 list_pages = false
 
-[[extra.header_nav]]
-en = { name = "/home/", url = "/"}
-
-[[extra.header_nav]]
-en = { name = "/publications/", url = "/publications" }
-
-[[extra.header_nav]]
-en = { name = "/photography/", url = "/photography" }
+header_nav = [
+    { url = "/", name_en = "/home/" },
+    { url = "/publications", name_en = "/publications/" },
+    { url = "/photography", name_en = "/photography/" }
+]
