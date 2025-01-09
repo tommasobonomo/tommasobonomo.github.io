@@ -11,10 +11,10 @@ jobs:
     name: Build and Push
     steps:
       - name: git-checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Build and deploy
-        uses: shalzz/zola-deploy-action@v0.17.2
+        uses: shalzz/zola-deploy-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PAGES_BRANCH: build
