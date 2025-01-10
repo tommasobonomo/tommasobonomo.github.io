@@ -17,6 +17,7 @@ Plain old email is probably the best way for NLP and ML/DL related matters, whil
 ## Contacts
 
 - ✉️ Email: [bonomo@diag.uniroma1.it](mailto:bonomo@diag.uniroma1.it)
+- 🎓 Google Scholar: [Tommaso Bonomo](https://scholar.google.com/citations?user=Xn6-XR4AAAAJ)
 - 🐦 Twitter/X: [@tommybonomo](https://twitter.com/tommybonomo)
 - 🦋 BlueSky: [@tommasobonomo.bsky.social](https://bsky.app/profile/tommasobonomo.bsky.social)
 - 💻 GitHub: [@tommasobonomo](https://github.com/tommasobonomo)
